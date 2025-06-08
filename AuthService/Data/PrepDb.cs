@@ -1,6 +1,7 @@
 using AuthService.Models;
 using AuthService.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
 
 namespace AuthService.Data;
 
@@ -34,7 +35,7 @@ public static class PrepDb
                 UserName = "admin",
                 PasswordHash = adminPassword.Item1,
                 PasswordSalt = adminPassword.Item2,
-                CreatedAt = DateTime.UtcNow,
+                IsAdmin = true,
                 Role = Roles.Admin
             };
             context.Users.Add(admin);

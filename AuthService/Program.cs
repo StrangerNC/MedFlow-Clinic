@@ -1,6 +1,5 @@
 using AuthService.AsyncDataService;
 using AuthService.Data;
-using AuthService.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuthService;
@@ -35,6 +34,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.MapGrpcService<SyncDataService.GrpcAuth>();
         app.MapControllers();
         app.UseAuthorization();
         app.UseAuthentication();

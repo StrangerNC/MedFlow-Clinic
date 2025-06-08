@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "UserManagementService";
+
+service GrpcAuth{
+  rpc GetAllUsers(stream GrpcUserRequest) returns (stream GrpcUserResponse);
+}
+
+message GrpcUserRequest{
+  int32 userId = 1;
+  bool isTransferred = 2;
+}
+
+message GrpcUserResponse{
+  int32 userId = 1;
+  string userName = 2;
+  string role = 3;
+}

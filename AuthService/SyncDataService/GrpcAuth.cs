@@ -1,5 +1,6 @@
 using AuthService.Data;
 using AuthService.Dtos;
+using AuthService.Models;
 using AutoMapper;
 using Grpc.Core;
 
@@ -10,25 +11,12 @@ public class GrpcAuth(IRepository repository, IMapper mapper) : AuthService.Grpc
     private readonly IRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public override async Task GetAllUsers(
-        IAsyncStreamReader<GrpcUserRequest> requestStream,
-        IServerStreamWriter<GrpcUserResponse> responseStream,
-        ServerCallContext context)
+    public override async Task GetAllUsers(IAsyncStreamReader<GrpcUserRequest> requestStream,
+        IServerStreamWriter<GrpcUserResponse> responseStream, ServerCallContext context)
     {
         var users = await _repository.GetNotTransferredUsers();
-
         var updateTasks = new List<Task>();
-
-        await foreach (var msg in requestStream.ReadAllAsync())
-        {
-            updateTasks.Add(Task.Run(() =>
-            {
-                _repository.UpdateTransferredUserStatus(msg.UserId, msg.IsTransferred);
-            }));
-        }
-
-        await Task.WhenAll(updateTasks);
-        _repository.SaveChanges();
+        var updateUsers = new List<GrpcUserRequest>();
 
         foreach (var user in users)
         {
@@ -40,5 +28,29 @@ public class GrpcAuth(IRepository repository, IMapper mapper) : AuthService.Grpc
                 Role = dto.Role,
             });
         }
+
+        await responseStream.WriteAsync(new GrpcUserResponse
+        {
+            UserId = -1,
+            UserName = "",
+            Role = "",
+        });
+        await foreach (var msg in requestStream.ReadAllAsync())
+        {
+            updateTasks.Add(Task.Run(() =>
+            {
+                // _repository.UpdateTransferredUserStatus(msg.UserId, msg.IsTransferred);
+                updateUsers.Add(msg);
+            }));
+        }
+
+        await Task.WhenAll(updateTasks);
+        foreach (var user in updateUsers)
+        {
+            _repository.UpdateTransferredUserStatus(user.UserId,user.IsTransferred);
+        }
+
+        _repository.SaveChanges();
+        Console.WriteLine("-->[INFO] Grpc data was send");
     }
 }

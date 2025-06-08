@@ -12,13 +12,16 @@ public class User
     [Required] public DateTime CreatedAt { get; set; }
     [Required] public DateTime LastLogin { get; set; }
     [Required] public bool IsTransferred { get; set; }
+    public bool? IsActive { get; set; }
+    [Required] public bool IsAdmin { get; set; }
 }
 
 public enum Roles
 {
-    [Display(Name = "Администратор системы")] Admin,
+    [Display(Name = "Администратор системы")]
+    Admin,
 
-    [Display(Name = "Врач-терапевт")] Doctor,
+    [Display(Name = "Врач")] Doctor,
 
     [Display(Name = "Регистратор")] Registrar
 }

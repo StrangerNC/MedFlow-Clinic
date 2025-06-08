@@ -25,5 +25,8 @@
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
         <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     </ItemGroup>
-
+    <ItemGroup>
+        <Protobuf Include="Protos\auth.proto" GrpcService="Client"/>
+        <Protobuf Include="Protos\userManagement.proto" GrpcService="Server"/>
+    </ItemGroup>
 </Project>

@@ -103,9 +103,8 @@ public class AuthController(IRepository repository, IMapper mapper, IMessageBusC
                 Tuple<string, string> password = PasswordHasher.Hash(signUpRequest.Password);
                 user.PasswordHash = password.Item1;
                 user.PasswordSalt = password.Item2;
-                user.CreatedAt = DateTime.UtcNow;
                 _repository.CreateUser(user);
-                await _repository.SaveChanges();
+                _repository.SaveChanges();
                 var userPublish = _mapper.Map<UserPublishDto>(user);
                 await _messageBusClient.PublishNewUser(userPublish);
                 return CreatedAtAction(nameof(GetUser), new { userName = signUpRequest.UserName },
@@ -120,5 +119,28 @@ public class AuthController(IRepository repository, IMapper mapper, IMessageBusC
         }
 
         return StatusCode(500);
+    }
+
+    [HttpPost]
+    [Route("change-password")]
+    public async Task<ActionResult<UserReadDto>> ChangePassword(SignInRequestDto changePasswordRequest)
+    {
+        try
+        {
+            var user = await _repository.FindUserByUserName(changePasswordRequest.UserName);
+            if (user == null)
+                return Unauthorized();
+            Tuple<string, string> newPassword = PasswordHasher.Hash(changePasswordRequest.Password);
+            user.PasswordHash = newPassword.Item1;
+            user.PasswordSalt = newPassword.Item2;
+            _repository.UpdatePassword(user);
+            _repository.SaveChanges();
+            return Ok(_mapper.Map<UserReadDto>(user));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"-->[ERROR] AuthController change password action exception exception {e}");
+            return StatusCode(500);
+        }
     }
 }

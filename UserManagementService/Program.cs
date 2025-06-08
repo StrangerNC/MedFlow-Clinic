@@ -1,3 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using UserManagementService.AsyncDataService;
+using UserManagementService.Data;
+using UserManagementService.EventProcessing;
+using UserManagementService.SyncDataService;
+
 namespace UserManagementService;
 
 public class Program
@@ -8,12 +14,22 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddAuthorization();
-
+        builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
+        //Custom DI
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddScoped<IRepository, Repository>();
+        builder.Services.AddScoped<IAuthDataClient, AuthDataClient>();
+        builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
+        builder.Services.AddHostedService<AuthMessageBusSubscriber>();
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        builder.Services.AddGrpc();
 
         var app = builder.Build();
 
+        PrepDb.PrepPopulation(app);
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -23,26 +39,8 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                        new WeatherForecast
-                        {
-                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                            TemperatureC = Random.Shared.Next(-20, 55),
-                            Summary = summaries[Random.Shared.Next(summaries.Length)]
-                        })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
-
+        app.MapGrpcService<SyncDataService.GrpcUserManagement>();
+        app.MapControllers();
         app.Run();
     }
 }

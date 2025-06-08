@@ -6,9 +6,9 @@ namespace AuthService.Data;
 
 public class Repository(AppDbContext context) : IRepository
 {
-    public async Task<bool> SaveChanges()
+    public bool SaveChanges()
     {
-        return await context.SaveChangesAsync() > 0;
+        return context.SaveChanges() > 0;
     }
 
     public IEnumerable<string> GetRoles()
@@ -18,7 +18,7 @@ public class Repository(AppDbContext context) : IRepository
 
     public async Task<IEnumerable<User>> GetUsers()
     {
-        return await context.Users.ToListAsync();
+        return await context.Users.Where(x => x.IsAdmin == false).ToListAsync();
     }
 
     public async Task<User?> FindUserByUserName(string userName)
@@ -35,7 +35,7 @@ public class Repository(AppDbContext context) : IRepository
 
     public async Task<IEnumerable<User>> GetNotTransferredUsers()
     {
-        return await context.Users.Where(x => !x.IsTransferred).ToListAsync();
+        return await context.Users.Where(x => !x.IsTransferred && x.IsAdmin == false).ToListAsync();
     }
 
     public void UpdateTransferredUserStatus(int userId, bool transferred)
@@ -47,5 +47,10 @@ public class Repository(AppDbContext context) : IRepository
     public void CreateUser(User user)
     {
         context.Users.Add(user);
+    }
+
+    public void UpdatePassword(User user)
+    {
+        context.Users.Update(user);
     }
 }
