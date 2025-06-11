@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usermanagementservice-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usermanagementservice
+  template:
+    metadata:
+      labels:
+        app: usermanagementservice
+    spec:
+      containers:
+        - name: usermanagementservice
+          image: darthstranger/usermanagementservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usermanagementservice-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: usermanagementservice
+  ports:
+    - name: usermanagementservice
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: usermanagementgrpc
+      protocol: TCP
+      port: 666
+      targetPort: 666

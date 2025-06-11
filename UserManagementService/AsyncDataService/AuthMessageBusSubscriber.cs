@@ -37,7 +37,7 @@ public class AuthMessageBusSubscriber(IConfiguration configuration, IEventProces
         await _channel.QueueBindAsync(_authQueueName, _channelName, "");
         Console.WriteLine("-->[INFO] RabbitMQ subscriber is listening...]");
         _connection.ConnectionShutdownAsync += async (sender, @event) =>
-            Console.WriteLine("-->[INFO] RabbitMQ subscriber connection shutdown...]");
+            Console.WriteLine("-->[INFO] RabbitMQ subscriber connection shutdown...");
     }
 
     public override void Dispose()

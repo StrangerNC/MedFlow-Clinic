@@ -18,13 +18,13 @@ public class Program
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
         //Custom DI
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
         builder.Services.AddScoped<IRepository, Repository>();
         builder.Services.AddScoped<IAuthDataClient, AuthDataClient>();
         builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
         builder.Services.AddHostedService<AuthMessageBusSubscriber>();
-        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         builder.Services.AddGrpc();
 
         var app = builder.Build();

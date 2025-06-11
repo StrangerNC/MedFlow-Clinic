@@ -19,12 +19,5 @@ public class AppDbContext : DbContext
             entity.Property(x => x.IsTransferred)
                 .HasDefaultValue(false);
         });
-        modelBuilder.Entity<UserProfile>(entity =>
-            {
-                entity.HasOne(x => x.User)
-                    .WithMany(x => x.UserProfiles)
-                    .HasForeignKey(x => x.UserId);
-            }
-        );
     }
 }

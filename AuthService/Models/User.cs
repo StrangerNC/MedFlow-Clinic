@@ -18,10 +18,7 @@ public class User
 
 public enum Roles
 {
-    [Display(Name = "Администратор системы")]
     Admin,
-
-    [Display(Name = "Врач")] Doctor,
-
-    [Display(Name = "Регистратор")] Registrar
+    Doctor,
+    Registrar
 }
