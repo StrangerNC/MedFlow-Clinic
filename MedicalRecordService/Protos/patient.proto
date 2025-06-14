@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "PatientService";
+
+service GrpcPatient{
+  rpc GetAllPatientsForTransfer(stream GrpcPatientRequest) returns (stream GrpcPatientResponse);
+  rpc GetAllPatients(GrpcEmptyRequest) returns (stream GrpcPatientResponse);
+}
+message GrpcEmptyRequest{
+
+}
+message GrpcPatientRequest{
+  int32 patientId = 1;
+  bool isTransferred = 2;
+}
+
+message GrpcPatientResponse{
+  int32 patientId = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string middleName = 4;
+  string phoneNumber = 5;
+}

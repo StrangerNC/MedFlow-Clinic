@@ -29,6 +29,7 @@ public class Program
         builder.Services.AddScoped<IMessageBusClient, MessageBusClient>();
         builder.Services.AddHostedService<DoctorMessageBusSubscriber>();
         builder.Services.AddHostedService<PatientMessageBusSubscriber>();
+        builder.Services.AddGrpc();
 
         var app = builder.Build();
         PrepDb.PrepPopulation(app);
@@ -39,9 +40,9 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
         app.MapControllers();
+        app.MapGrpcService<SyncDataService.GrpcAppointment>();
 
         app.Run();
     }

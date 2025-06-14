@@ -26,7 +26,7 @@ public class AppointmentController(IRepository repository, IMapper mapper, IMess
         }
         catch (Exception e)
         {
-            Console.WriteLine($"-->[INFO] AppointmentController GetAppointments action {e}");
+            Console.WriteLine($"-->[ERROR] AppointmentController GetAppointments action {e}");
             return StatusCode(500);
         }
     }
@@ -41,7 +41,7 @@ public class AppointmentController(IRepository repository, IMapper mapper, IMess
         }
         catch (Exception e)
         {
-            Console.WriteLine($"-->[INFO] AppointmentController GetAppointment action {e}");
+            Console.WriteLine($"-->[ERROR] AppointmentController GetAppointment action {e}");
             return StatusCode(500);
         }
     }
@@ -68,7 +68,7 @@ public class AppointmentController(IRepository repository, IMapper mapper, IMess
         }
         catch (Exception e)
         {
-            Console.WriteLine($"-->[INFO] AppointmentController CreateAppointment action {e}");
+            Console.WriteLine($"-->[ERROR] AppointmentController CreateAppointment action {e}");
             return StatusCode(500);
         }
     }
@@ -93,7 +93,7 @@ public class AppointmentController(IRepository repository, IMapper mapper, IMess
         }
         catch (Exception e)
         {
-            Console.WriteLine($"-->[INFO] AppointmentController UpdateAppointment action {e}");
+            Console.WriteLine($"-->[ERROR] AppointmentController UpdateAppointment action {e}");
             return StatusCode(500);
         }
     }
@@ -109,9 +109,38 @@ public class AppointmentController(IRepository repository, IMapper mapper, IMess
         }
         catch (Exception e)
         {
-            Console.WriteLine($"-->[INFO] AppointmentController findAppointment action {e}");
+            Console.WriteLine($"-->[ERROR] AppointmentController findAppointment action {e}");
             return StatusCode(500);
         }
     }
-    //Todo add updatestatus for appointment
+
+    [HttpGet("patient/{id}")]
+    public async Task<ActionResult<IEnumerable<AppointmentReadDto>>> GetAppointmentByPatient(int id)
+    {
+        try
+        {
+            var appointment = await _repository.GetAppointmentByPatient(id);
+            return Ok(_mapper.Map<IEnumerable<AppointmentReadDto>>(appointment));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"-->[ERROR] AppointmentController GetAppointmentByPatient action {e}");
+            return StatusCode(500);
+        }
+    }
+
+    [HttpGet("doctor/{id}")]
+    public async Task<ActionResult<IEnumerable<AppointmentReadDto>>> GetAppointmentByDoctor(int id)
+    {
+        try
+        {
+            var appointment = await _repository.GetAppointmentByDoctor(id);
+            return Ok(_mapper.Map<IEnumerable<AppointmentReadDto>>(appointment));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"-->[ERROR] AppointmentController GetAppointmentByDoctor action {e}");
+            return StatusCode(500);
+        }
+    }
 }

@@ -11,6 +11,7 @@ public interface IRepository
     Task<IEnumerable<Appointment>> GetAppointments();
     Task<Appointment?> GetAppointment(int id);
     Task<IEnumerable<Appointment>> GetAppointmentByDoctor(int doctorId);
+    Task<IEnumerable<Appointment>> GetAppointmentByPatient(int patientId);
     void CreateAppointment(Appointment appointment);
     void UpdateAppointment(Appointment appointment);
     void DeleteAppointment(Appointment appointment);

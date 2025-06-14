@@ -29,6 +29,11 @@ public class Repository(AppDbContext context) : IRepository
         return appointments;
     }
 
+    public async Task<IEnumerable<Appointment>> GetAppointmentByPatient(int patientId)
+    {
+        return await context.Appointments.Where(p => p.PatientId == patientId).ToListAsync();
+    }
+
     public void CreateAppointment(Appointment appointment)
     {
         context.Appointments.Add(appointment);
