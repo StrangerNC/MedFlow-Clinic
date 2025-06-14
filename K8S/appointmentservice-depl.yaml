@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointmentservice-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointmentservice
+  template:
+    metadata:
+      labels:
+        app: appointmentservice
+    spec:
+      containers:
+        - name: appointmentservice
+          image: darthstranger/appointmentservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointmentservice-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: appointmentservice
+  ports:
+    - name: appointmentservice
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: appointmentgrpc
+      protocol: TCP
+      port: 666
+      targetPort: 666

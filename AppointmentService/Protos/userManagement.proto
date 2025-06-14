@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "AppointmentService";
+
+service GrpcUserManagement{
+  rpc GetAllUserProfiles(GrpcUserManagementEmpty) returns (stream GrpcUserProfileResponse);
+}
+message GrpcUserManagementEmpty
+{
+  
+}
+message GrpcUserProfileResponse{
+  int32 userProfileId = 1;
+  string position = 2;
+  string department = 3;
+  string fullName = 4;
+}

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PatientService.AsyncDataService;
 using PatientService.Data;
+using RabbitMQ.Client.Events;
 
 namespace PatientService;
 

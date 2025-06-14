@@ -57,7 +57,7 @@ public class MessageBusClient : IMessageBusClient
     {
         var body = Encoding.UTF8.GetBytes(message);
         await _channel.BasicPublishAsync(_configuration["RabbitMQChannel"], string.Empty, body);
-        Console.WriteLine("-->[INFO] Message sent {message}");
+        Console.WriteLine($"-->[INFO] Message sent {message}");
     }
 
     public void Dispose()

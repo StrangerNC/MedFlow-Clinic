@@ -1,4 +1,5 @@
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using UserManagementService.Data;
 using UserManagementService.Dtos;
@@ -12,7 +13,7 @@ public class GrpcUserManagement(IRepository repository, IMapper mapper)
     private readonly IRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
 
-    public override async Task GetAllUserProfiles(IAsyncStreamReader<GrpcUserProfileRequest> requestStream,
+    public override async Task GetAllUserProfilesForTransfer(IAsyncStreamReader<GrpcUserProfileRequest> requestStream,
         IServerStreamWriter<GrpcUserProfileResponse> responseStream,
         ServerCallContext context)
     {
@@ -52,5 +53,23 @@ public class GrpcUserManagement(IRepository repository, IMapper mapper)
         }
         _repository.SaveChanges();
         Console.WriteLine("-->[INFO] Grpc data was send");
+    }
+
+    public override async Task GetAllUserProfiles(GrpcEmptyRequest request, IServerStreamWriter<GrpcUserProfileResponse> responseStream, ServerCallContext context)
+    {
+        var userProfiles = await _repository.GetUserProfiles();
+        foreach (var userProfile in userProfiles)
+        {
+            var dto = _mapper.Map<UserProfilePublishDto>(userProfile);
+            await responseStream.WriteAsync(new GrpcUserProfileResponse()
+            {
+                UserProfileId = dto.Id,
+                FullName = dto.FullName,
+                Department = dto.Department,
+                Position = dto.Position
+            });
+        }
+        Console.WriteLine("-->[INFO] Grpc data was send");
+        await Task.CompletedTask;
     }
 }

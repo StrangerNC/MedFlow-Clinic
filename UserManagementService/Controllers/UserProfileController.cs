@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using UserManagementService.AsyncDataService;
 using UserManagementService.Data;
 using UserManagementService.Dtos;
 using UserManagementService.Models;
@@ -9,11 +10,16 @@ namespace UserManagementService.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserProfileController(IRepository repository, IMapper mapper, IAuthDataClient grpcClient) : ControllerBase
+public class UserProfileController(
+    IRepository repository,
+    IMapper mapper,
+    IAuthDataClient grpcClient,
+    IMessageBusClient messageBus) : ControllerBase
 {
     private readonly IRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
     private readonly IAuthDataClient _grpcClient = grpcClient;
+    private readonly IMessageBusClient _messageBus = messageBus;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserProfileReadDto>>> GetUserProfiles()
@@ -73,14 +79,15 @@ public class UserProfileController(IRepository repository, IMapper mapper, IAuth
     public async Task<ActionResult<UserProfileReadDto>> CreateUserProfile(int userId,
         UserProfileCreateDto userCreateDto)
     {
+        //ToDo Rewrite code to work with externalUserId, it will be easier for apigateway
         try
         {
-            var userExists = await _repository.GetUserById(userId);
+            var userExists = await _repository.GetUserByExternalId(userId);
             if (userExists == null)
             {
                 PrepDb.SeedAuthData(_grpcClient, _repository);
-                var doubleCheckUserExists = _repository.UserExists(userId);
-                if (!doubleCheckUserExists)
+                var doubleCheckUserExists = await _repository.GetUserByExternalId(userId);
+                if (doubleCheckUserExists == null)
                     return NotFound();
             }
 
@@ -93,6 +100,8 @@ public class UserProfileController(IRepository repository, IMapper mapper, IAuth
             _repository.CreateUserProfile(userProfile);
             _repository.SaveChanges();
             var userProfileRead = _mapper.Map<UserProfileReadDto>(userProfile);
+            var userProfilePublished = _mapper.Map<UserProfilePublishDto>(userProfile);
+            await _messageBus.PublishNewUserProfile(userProfilePublished);
             return CreatedAtRoute(nameof(GetUserProfile), new { userProfileId = userProfile.Id }, userProfileRead);
         }
         catch (Exception e)

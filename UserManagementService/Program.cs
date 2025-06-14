@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using Microsoft.EntityFrameworkCore;
 using UserManagementService.AsyncDataService;
 using UserManagementService.Data;
@@ -25,6 +26,7 @@ public class Program
         builder.Services.AddScoped<IAuthDataClient, AuthDataClient>();
         builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
         builder.Services.AddHostedService<AuthMessageBusSubscriber>();
+        builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
         builder.Services.AddGrpc();
 
         var app = builder.Build();

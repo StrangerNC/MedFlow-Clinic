@@ -26,4 +26,11 @@
         <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="AsyncDataService\" />
+      <Folder Include="Controllers\" />
+      <Folder Include="Protos\" />
+      <Folder Include="SyncDataService\" />
+    </ItemGroup>
+
 </Project>
