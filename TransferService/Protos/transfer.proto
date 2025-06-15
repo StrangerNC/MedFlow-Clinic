@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "TransferService";
+
+service GrpcTransferData{
+  rpc TransferUserProfile(stream TransferUserProfileRequest) returns(TransferUserProfileRequest);
+  rpc TransferPatient(stream TransferPatientRequest) returns (TransferPatientResponse);
+  rpc TransferMedicalReport(stream TransferMedicalRecordRequest) returns(TransferMedicalRecordResponse);
+  rpc TransferVisit(stream TransferVisitRequest) returns(TransferVisitResponse);
+  rpc TransferAppointment(stream TransferAppointmentRequest) returns(TransferAppointmentResponse);
+  rpc TransferClinicData(TransferClinicDataRequest) returns (TransferClinicDataResponse);
+}
+message TransferUserProfileRequest{
+  int32 userProfileId = 1;
+  string position = 2;
+  string department = 3;
+  string fullName = 4;
+}
+message TransferUserProfileResponse
+{
+
+}
+message TransferPatientRequest
+{
+  int32 patientId = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string middleName = 4;
+  string phoneNumber = 5;
+}
+message TransferPatientResponse
+{
+
+}
+message TransferMedicalRecordRequest
+{
+  int32 medicalRecordId = 1;
+  int32 patientId = 2;
+}
+message TransferMedicalRecordResponse
+{
+
+}
+message TransferVisitRequest
+{
+  int32 visitId = 1;
+  int32 medicalRecordId = 2;
+  int32 appointmentId = 3;
+  google.protobuf.Timestamp visitDate = 4;
+  string chiefComplaint = 5;
+  string diagnosis = 6;
+  string treatmentPlan = 7;
+  string notes = 8;
+}
+message TransferVisitResponse
+{
+
+}
+message TransferAppointmentRequest
+{
+  int32 appointmentId = 1;
+  int32 patientId = 2;
+  int32 doctorId = 3;
+  string status = 4;
+  string reason = 5;
+}
+message TransferAppointmentResponse
+{
+
+}
+message TransferClinicDataRequest
+{
+  int32 clinicId = 1;
+  string name = 2;
+  string address = 3;
+  string contactPerson = 4;
+  string contactEmail = 5;
+  string region = 6;
+}
+message TransferClinicDataResponse
+{
+
+}

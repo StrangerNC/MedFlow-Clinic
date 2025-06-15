@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "TransferService";
+
+service GrpcUserManagement{
+  rpc GetAllUserProfilesForTransfer(stream GrpcUserProfileRequest) returns (stream GrpcUserProfileResponse);
+}
+
+message GrpcUserProfileRequest{
+  int32 userProfileId = 1;
+  bool isTransferred = 2;
+}
+
+message GrpcUserProfileResponse{
+  int32 userProfileId = 1;
+  string position = 2;
+  string department = 3;
+  string fullName = 4;
+}

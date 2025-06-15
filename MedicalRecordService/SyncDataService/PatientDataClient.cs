@@ -1,10 +1,10 @@
-using AppointmentService.Dtos;
-using AppointmentService.Models;
+using MedicalRecordService.Dtos;
+using MedicalRecordService.Models;
 using AutoMapper;
 using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace AppointmentService.SyncDataService;
+namespace MedicalRecordService.SyncDataService;
 
 public class PatientDataClient(IConfiguration configuration, IMapper mapper) : IPatientDataClient
 {
@@ -26,13 +26,14 @@ public class PatientDataClient(IConfiguration configuration, IMapper mapper) : I
                 Console.WriteLine("-->[INFO] All patients received");
                 break;
             }
-        
+
             Console.WriteLine($"-->[INFO] Grpc received {response.PatientId} {response.FirstName}");
             var patientPublished = _mapper.Map<PatientPublishedDto>(response);
+            patientPublished.ExternalId = response.PatientId;
             var patient = _mapper.Map<Patient>(patientPublished);
             result.Add(patient);
         }
-        
+
         Console.WriteLine("-->[INFO] Grpc patients received");
         return result;
     }

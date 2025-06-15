@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "TransferService";
+
+service GrpcAppointment{
+  rpc GetAllAppointmentsForTransfer(stream GrpcAppointmentRequest) returns (stream GrpcAppointmentResponse);
+}
+
+message GrpcAppointmentResponse{
+  int32 appointmentId = 1;
+  int32 patientId = 2;
+  int32 doctorId = 3;
+  string status = 4;
+  string reason = 5;
+}
+message GrpcAppointmentRequest{
+  int32 appointmentId = 1;
+  bool isTransferred = 2;
+}

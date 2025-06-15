@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "MedicalRecordService";
+
+service GrpcMedicalRecord
+{
+  rpc GetMedicalRecordForTransfer(stream GrpcMedicalRecordRequest) returns (stream GrpcMedicalRecordResponse);
+  rpc GetVisitForTransfer(stream GrpcVisitRequest) returns (stream GrpcVisitResponse);
+}
+message GrpcMedicalRecordRequest
+{
+  int32 medicalRecordId = 1;
+  bool isTransferred = 2;
+}
+message GrpcMedicalRecordResponse{
+  int32 medicalRecordId = 1;
+  int32 patientId = 2;
+}
+message GrpcVisitRequest
+{
+  int32 visitId = 1;
+  bool isTransferred = 2;
+}
+message GrpcVisitResponse{
+  int32 visitId = 1;
+  int32 medicalRecordId = 2;
+  int32 appointmentId = 3;
+  google.protobuf.Timestamp visitDate = 4;
+  string chiefComplaint = 5;
+  string diagnosis = 6;
+  string treatmentPlan = 7;
+  string notes = 8;
+}

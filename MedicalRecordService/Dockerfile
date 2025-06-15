@@ -1,23 +1,13 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+﻿FROM --platform=linux/amd64 mcr.microsoft.com/dotnet/sdk:9.0 AS build-env
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["MedicalRecordService/MedicalRecordService.csproj", "MedicalRecordService/"]
-RUN dotnet restore "MedicalRecordService/MedicalRecordService.csproj"
-COPY . .
-WORKDIR "/src/MedicalRecordService"
-RUN dotnet build "./MedicalRecordService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+COPY *.csproj ./
+RUN dotnet restore 
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MedicalRecordService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY . ./
+RUN dotnet publish -c Release -o out
 
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "MedicalRecordService.dll"]

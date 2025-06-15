@@ -1,3 +1,4 @@
+using MedicalRecordService.Dtos;
 using MedicalRecordService.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +32,11 @@ public class Repository(AppDbContext context) : IRepository
     {
         var medicalRecords = await context.MedicalRecords.ToListAsync();
         return medicalRecords;
+    }
+
+    public async Task<IEnumerable<MedicalRecord>> GetMedicalRecordByPatient(int id)
+    {
+        return await context.MedicalRecords.Where(x => x.PatientId == id).ToListAsync();
     }
 
     public async Task<MedicalRecord?> GetMedicalRecord(int id)
@@ -70,6 +76,11 @@ public class Repository(AppDbContext context) : IRepository
     {
         var visits = await context.Visits.ToListAsync();
         return visits;
+    }
+
+    public async Task<IEnumerable<Visit>> GetVisitByMedicalRecord(int id)
+    {
+        return await context.Visits.Where(x => x.MedicalRecordId == id).ToListAsync();
     }
 
     public async Task<Visit?> GetVisit(int id)

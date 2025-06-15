@@ -1,6 +1,6 @@
-using AppointmentService.Models;
+using MedicalRecordService.Models;
 
-namespace AppointmentService.SyncDataService;
+namespace MedicalRecordService.SyncDataService;
 
 public interface IPatientDataClient
 {

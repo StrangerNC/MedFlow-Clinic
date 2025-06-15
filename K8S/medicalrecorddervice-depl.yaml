@@ -1,17 +1,35 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: $title$
-  labels:
-    role: $title$
+  name: medicalrecordservice-depl
 spec:
-  containers:
-    - name: $title$
-      image: $nginx$
-      imagePullPolicy: IfNotPresent
-      ports:
-        - name: $title$
-          containerPort: $80$
-          protocol: $TCP$
-  restartPolicy: Always
-  $END$
+  replicas: 1
+  selector:
+    matchLabels:
+      app: medicalrecordservice
+  template:
+    metadata:
+      labels:
+        app: medicalrecordservice
+    spec:
+      containers:
+        - name: medicalrecordservice
+          image: darthstranger/medicalrecordservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: medicalrecordservice-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: medicalrecordservice
+  ports:
+    - name: medicalrecordservice
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: medicalrecordservicegrpc
+      protocol: TCP
+      port: 666
+      targetPort: 666

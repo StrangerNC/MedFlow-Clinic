@@ -4,33 +4,41 @@
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-        <PackageReference Include="Google.Protobuf" Version="3.31.1" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
+        <PackageReference Include="Google.Protobuf" Version="3.31.1"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.71.0"/>
         <PackageReference Include="Grpc.Tools" Version="2.72.0">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.5"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.5" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-        <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.5"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4"/>
+        <PackageReference Include="RabbitMQ.Client" Version="7.1.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="AsyncDataService\" />
-      <Folder Include="Controllers\" />
-      <Folder Include="Protos\" />
-      <Folder Include="SyncDataService\" />
+        <Folder Include="AsyncDataService\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Protobuf Include="Protos\appointment.proto" GrpcService="Client"/>
+        <Protobuf Include="Protos\patient.proto" GrpcService="Client"/>
+        <Protobuf Include="Protos\medicalrecord.proto" GrpcService="Server"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

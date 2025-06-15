@@ -24,7 +24,8 @@ public class GrpcAppointment(IRepository repository, IMapper mapper)
                 AppointmentId = dto.Id,
                 PatientId = dto.PatientId,
                 DoctorId = dto.DoctorId,
-                Status = dto.Status
+                Status = dto.Status,
+                Reason = dto.Reason
             });
         }
 
@@ -47,7 +48,8 @@ public class GrpcAppointment(IRepository repository, IMapper mapper)
                 AppointmentId = dto.Id,
                 PatientId = dto.PatientId,
                 DoctorId = dto.DoctorId,
-                Status = dto.Status
+                Status = dto.Status,
+                Reason = dto.Reason
             });
         }
 
@@ -56,7 +58,8 @@ public class GrpcAppointment(IRepository repository, IMapper mapper)
             AppointmentId = -1,
             PatientId = -1,
             DoctorId = -1,
-            Status = ""
+            Status = "",
+            Reason = "",
         });
         await foreach (var msg in requestStream.ReadAllAsync())
         {
