@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transferservice-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transferservice
+  template:
+    metadata:
+      labels:
+        app: transferservice
+    spec:
+      containers:
+        - name: transferservice
+          image: darthstranger/transferservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transferservice-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: transferservice
+  ports:
+    - name: transferservice
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+    - name: transfergrpc
+      protocol: TCP
+      port: 666
+      targetPort: 666

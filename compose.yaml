@@ -1,0 +1,7 @@
+﻿services:
+  transferservice:
+    image: transferservice
+    build:
+      context: .
+      dockerfile: TransferService/Dockerfile
+

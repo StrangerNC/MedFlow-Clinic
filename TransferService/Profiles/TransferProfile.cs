@@ -1,5 +1,7 @@
 using AutoMapper;
+using Google.Protobuf.WellKnownTypes;
 using TransferService.Models;
+using TransferService.Utils;
 
 namespace TransferService.Profiles;
 
@@ -29,7 +31,9 @@ public class TransferProfile : Profile
         CreateMap<Appointment, TransferAppointmentRequest>();
         CreateMap<MedicalRecord, TransferMedicalRecordRequest>();
         CreateMap<Patient, TransferPatientRequest>();
-        CreateMap<Visit, TransferVisitRequest>();
+        CreateMap<Visit, TransferVisitRequest>()
+            .ForMember(dest => dest.VisitDate, opt =>
+                opt.MapFrom(src => src.VisitDate.ToUtcKind().ToTimestamp()));;
         CreateMap<UserProfile, TransferUserProfileRequest>();
         CreateMap<ClinicData, TransferClinicDataRequest>();
     }
