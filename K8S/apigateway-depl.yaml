@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clinic-apigateway-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clinic-apigateway
+  template:
+    metadata:
+      labels:
+        app: clinic-apigateway
+    spec:
+      containers:
+        - name: clinic-apigateway
+          image: darthstranger/clinic-apigateway:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clinic-apigateway-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: clinic-apigateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clinic-apigateway-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: clinic-apigateway
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

@@ -12,7 +12,7 @@ public class MedicalRecordController(IRepository repository, IMapper mapper) : C
 {
     private readonly IRepository _repository = repository;
     private readonly IMapper _mapper = mapper;
-
+    //ToDo make get functions returns external patient Id as patient Id
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MedicalRecordReadDto>>> GetMedicalRecords()
     {

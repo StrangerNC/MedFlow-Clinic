@@ -30,18 +30,18 @@ public class Repository(AppDbContext context) : IRepository
 
     public async Task<IEnumerable<MedicalRecord>> GetMedicalRecords()
     {
-        var medicalRecords = await context.MedicalRecords.ToListAsync();
+        var medicalRecords = await context.MedicalRecords.Include(x => x.Patient).ToListAsync();
         return medicalRecords;
     }
 
     public async Task<IEnumerable<MedicalRecord>> GetMedicalRecordByPatient(int id)
     {
-        return await context.MedicalRecords.Where(x => x.PatientId == id).ToListAsync();
+        return await context.MedicalRecords.Include(x => x.Patient).Where(x => x.PatientId == id).ToListAsync();
     }
 
     public async Task<MedicalRecord?> GetMedicalRecord(int id)
     {
-        var medicalRecord = await context.MedicalRecords.FirstOrDefaultAsync(x => x.Id == id);
+        var medicalRecord = await context.MedicalRecords.Include(x => x.Patient).FirstOrDefaultAsync(x => x.Id == id);
         return medicalRecord;
     }
 
@@ -74,18 +74,18 @@ public class Repository(AppDbContext context) : IRepository
 
     public async Task<IEnumerable<Visit>> GetVisits()
     {
-        var visits = await context.Visits.ToListAsync();
+        var visits = await context.Visits.Include(x => x.Appointment).ToListAsync();
         return visits;
     }
 
     public async Task<IEnumerable<Visit>> GetVisitByMedicalRecord(int id)
     {
-        return await context.Visits.Where(x => x.MedicalRecordId == id).ToListAsync();
+        return await context.Visits.Include(x => x.Appointment).Where(x => x.MedicalRecordId == id).ToListAsync();
     }
 
     public async Task<Visit?> GetVisit(int id)
     {
-        var visit = await context.Visits.FirstOrDefaultAsync(x => x.Id == id);
+        var visit = await context.Visits.Include(x => x.Appointment).FirstOrDefaultAsync(x => x.Id == id);
         return visit;
     }
 

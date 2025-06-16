@@ -73,6 +73,7 @@ public class AppointmentController(IRepository repository, IMapper mapper, IMess
         }
     }
 
+    //ToDo make get functions return external patient id as patient id
     [HttpPut("{id}")]
     public async Task<ActionResult<AppointmentReadDto>> UpdateAppointment(int id,
         AppointmentCreateDto appointmentCreateDto)

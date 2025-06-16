@@ -1,10 +1,15 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using AuthService.AsyncDataService;
 using AuthService.Data;
 using AuthService.Dtos;
 using AuthService.Models;
 using AuthService.Utils;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AuthService.Controllers;
 
@@ -68,6 +73,7 @@ public class AuthController(IRepository repository, IMapper mapper, IMessageBusC
 
     [HttpPost]
     [Route("sign-in")]
+    [AllowAnonymous]
     public async Task<ActionResult<UserReadDto>> SignIn(SignInRequestDto signInRequest)
     {
         try
@@ -78,7 +84,8 @@ public class AuthController(IRepository repository, IMapper mapper, IMessageBusC
             if (PasswordHasher.Verify(new Tuple<string, string>(user.PasswordHash, user.PasswordSalt),
                     signInRequest.Password))
             {
-                return Ok(_mapper.Map<UserReadDto>(user));
+                var token = GenerateJwtToken(user);
+                return Ok(new { Token = token, User = _mapper.Map<UserReadDto>(user) });
             }
 
             return Unauthorized();
@@ -142,5 +149,45 @@ public class AuthController(IRepository repository, IMapper mapper, IMessageBusC
             Console.WriteLine($"-->[ERROR] AuthController change password action exception exception {e}");
             return StatusCode(500);
         }
+    }
+
+    [HttpGet("whoami")]
+    public IActionResult WhoAmI()
+    {
+        if (!HttpContext.User.Identity!.IsAuthenticated)
+            return Unauthorized("Вы не аутентифицированы");
+
+        return Ok(new
+        {
+            IsAuthenticated = User.Identity.IsAuthenticated,
+            Claims = User.Claims.Select(c => new { c.Type, c.Value }),
+            Roles = User.Claims
+                .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+                .Select(c => c.Value)
+        });
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var securityKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes("you-will-be-in-my-heart-forever-my-love-maftuna"));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+            new Claim("name", user.UserName),
+            new Claim("role", user.Role.ToString()),
+        };
+
+        var token = new JwtSecurityToken(
+            issuer: "MedFlow.Auth",
+            audience: "MedFlow.ApiGateway",
+            claims: claims,
+            expires: DateTime.Now.AddDays(30),
+            signingCredentials: credentials
+        );
+
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        return tokenString;
     }
 }

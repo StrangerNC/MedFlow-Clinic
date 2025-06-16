@@ -10,11 +10,21 @@ public class AppointmentProfile : Profile
     {
         CreateMap<Patient, PatientReadDto>();
         CreateMap<PatientPublishedDto, Patient>();
-        CreateMap<Doctor, DoctorReadDto>();
+        CreateMap<Doctor, DoctorReadDto>()
+            .ForMember(x => x.Id, opt =>
+                opt.MapFrom(x => x.ExternalId));
         CreateMap<DoctorPublishedDto, Doctor>();
-        CreateMap<Appointment, AppointmentReadDto>();
+        CreateMap<Appointment, AppointmentReadDto>()
+            .ForMember(x => x.PatientId, opt =>
+                opt.MapFrom(x => x.Patient.ExternalId))
+            .ForMember(x => x.DoctorId, opt =>
+                opt.MapFrom(x => x.Doctor.ExternalId));
         CreateMap<AppointmentCreateDto, Appointment>();
-        CreateMap<Appointment, AppointmentPublishDto>();
+        CreateMap<Appointment, AppointmentPublishDto>()
+            .ForMember(x => x.PatientId, opt =>
+                opt.MapFrom(x => x.Patient.ExternalId))
+            .ForMember(x => x.DoctorId, opt =>
+                opt.MapFrom(x => x.Doctor.ExternalId));
         CreateMap<PatientReceivedDto, Patient>().ForMember(x => x.Id, opt =>
             opt.Ignore());
         CreateMap<DoctorReceivedDto, Doctor>().ForMember(x => x.Id, opt =>

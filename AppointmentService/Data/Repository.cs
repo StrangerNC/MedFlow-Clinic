@@ -13,25 +13,25 @@ public class Repository(AppDbContext context) : IRepository
 
     public async Task<IEnumerable<Appointment>> GetAppointments()
     {
-        var appointments = await context.Appointments.ToListAsync();
+        var appointments = await context.Appointments.Include(x=> x.Patient).Include(x=> x.Doctor).ToListAsync();
         return appointments;
     }
 
     public async Task<Appointment?> GetAppointment(int id)
     {
-        var appointment = await context.Appointments.FirstOrDefaultAsync(p => p.Id == id);
+        var appointment = await context.Appointments.Include(x=> x.Patient).Include(x=> x.Doctor).FirstOrDefaultAsync(p => p.Id == id);
         return appointment;
     }
 
     public async Task<IEnumerable<Appointment>> GetAppointmentByDoctor(int doctorId)
     {
-        var appointments = await context.Appointments.Where(p => p.DoctorId == doctorId).ToListAsync();
+        var appointments = await context.Appointments.Include(x=> x.Patient).Include(x=> x.Doctor).Where(p => p.DoctorId == doctorId).ToListAsync();
         return appointments;
     }
 
     public async Task<IEnumerable<Appointment>> GetAppointmentByPatient(int patientId)
     {
-        return await context.Appointments.Where(p => p.PatientId == patientId).ToListAsync();
+        return await context.Appointments.Include(x=> x.Patient).Include(x=> x.Doctor).Where(p => p.PatientId == patientId).ToListAsync();
     }
 
     public void CreateAppointment(Appointment appointment)
@@ -51,7 +51,7 @@ public class Repository(AppDbContext context) : IRepository
 
     public async Task<IEnumerable<Appointment>> FindAppointment(Expression<Func<Appointment, bool>> predicate)
     {
-        return await context.Appointments.Where(predicate).ToListAsync();
+        return await context.Appointments.Include(x=> x.Patient).Include(x=> x.Doctor).Where(predicate).ToListAsync();
     }
 
     public void UpdateTransferredAppointmentStatus(int appointmentId, bool isTransferred)

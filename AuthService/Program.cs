@@ -11,7 +11,6 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddAuthorization();
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
@@ -36,8 +35,6 @@ public class Program
         app.UseHttpsRedirection();
         app.MapGrpcService<SyncDataService.GrpcAuth>();
         app.MapControllers();
-        app.UseAuthorization();
-        app.UseAuthentication();
 
         app.Run();
     }
